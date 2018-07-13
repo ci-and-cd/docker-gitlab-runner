@@ -22,5 +22,5 @@ services:
     environment:
     # Do not set token here. Let users set this in gitlab project -> settings -> CI/DI pipelines
     - CI_INFRA_OPT_GIT_AUTH_TOKEN=${CI_INFRA_OPT_GIT_AUTH_TOKEN:-your_CI_INFRA_OPT_GIT_AUTH_TOKEN}
-    image: ${IMAGE_PREFIX:-cirepo}/${IMAGE_NAME:-gitlab-runner}:${IMAGE_TAG:-10.5.0-bionic_en_US.UTF-8_Etc.UTC}
+    image: ${IMAGE_PREFIX:-cirepo}/${IMAGE_NAME:-gitlab-runner}:${IMAGE_TAG:-10.5.0-en_US.UTF-8_Etc.UTC-bionic}
     restart: always

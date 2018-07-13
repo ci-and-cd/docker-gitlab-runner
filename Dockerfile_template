@@ -1,5 +1,5 @@
 
-FROM cirepo/bionic-cibase:latest
+FROM cirepo/cibase:latest-bionic
 
 
 ARG IMAGE_ARG_APT_MIRROR
@@ -24,7 +24,7 @@ ENV LANG ${IMAGE_ARG_LOCALE:-en_US}.${IMAGE_ARG_ENCODING:-UTF-8}
 ENV LC_ALL ${IMAGE_ARG_LOCALE:-en_US}.${IMAGE_ARG_ENCODING:-UTF-8}
 
 
-COPY --from=cirepo/bionic-locale:%IMAGE_ARG_LOCALE%.%IMAGE_ARG_ENCODING%_%IMAGE_ARG_TZ_AREA%.%IMAGE_ARG_TZ_ZONE%-archive /data/root /
+COPY --from=cirepo/locale:%IMAGE_ARG_LOCALE%.%IMAGE_ARG_ENCODING%_%IMAGE_ARG_TZ_AREA%.%IMAGE_ARG_TZ_ZONE%-bionic-archive /data/root /
 
 
 COPY --chown=root:root docker /
