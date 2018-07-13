@@ -1,0 +1,35 @@
+
+version: '2.1'
+services:
+  gitlab-runner:
+    extends:
+      file: docker-compose-base.yml
+      service: base-gitlab-runner
+    container_name: ${INSTANCE_NAME:-gitlab-runner}.${INSTANCE_DOMAIN:-local}
+    hostname: ${INSTANCE_NAME:-gitlab-runner}.${INSTANCE_DOMAIN:-local}
+    network_mode: bridge
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - home:/home/gitlab-runner # gitlab-runner user's home directory
+    - etc:/etc/gitlab-runner # gitlab-runner's config directory
+    - var:/var/lib/gitlab-runner # gitlab-runner builds's home directory
+
+volumes:
+  etc:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/data/etc
+      o: bind
+  home:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/data/home
+      o: bind
+  var:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/data/var
+      o: bind

@@ -1,0 +1,9 @@
+
+.idea
+*.iml
+
+.DS_Store
+
+Dockerfile
+
+/k8s/gitlab-runner-secret.yaml

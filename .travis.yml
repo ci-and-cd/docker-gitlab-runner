@@ -1,0 +1,35 @@
+
+addons:
+  apt:
+    packages:
+    - aria2
+#before_install:
+branches:
+  only:
+  - develop
+  - master
+
+dist: trusty
+env:
+  global:
+  - IMAGE_ARG_ALPINE_MIRROR=dl-cdn.alpinelinux.org
+  matrix:
+  - IMAGE_ARG_ENCODING=UTF-8 IMAGE_ARG_LANGUAGE=en IMAGE_ARG_REGION=US IMAGE_ARG_TZ_AREA=Etc  IMAGE_ARG_TZ_ZONE=UTC
+  - IMAGE_ARG_ENCODING=UTF-8 IMAGE_ARG_LANGUAGE=en IMAGE_ARG_REGION=US IMAGE_ARG_TZ_AREA=Asia IMAGE_ARG_TZ_ZONE=Shanghai
+
+  - IMAGE_ARG_ENCODING=UTF-8 IMAGE_ARG_LANGUAGE=zh IMAGE_ARG_REGION=CN IMAGE_ARG_TZ_AREA=Etc  IMAGE_ARG_TZ_ZONE=UTC
+  - IMAGE_ARG_ENCODING=UTF-8 IMAGE_ARG_LANGUAGE=zh IMAGE_ARG_REGION=CN IMAGE_ARG_TZ_AREA=Asia IMAGE_ARG_TZ_ZONE=Shanghai
+
+group: edge
+#install: true
+
+#before_script:
+script:
+- while sleep 9m; do echo "=====[ $SECONDS seconds still running ]====="; done &
+- bash build.sh
+- kill %1
+#after_script:
+
+services:
+- docker
+sudo: required

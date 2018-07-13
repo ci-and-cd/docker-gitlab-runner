@@ -1,0 +1,35 @@
+#!/bin/bash
+
+function update_ca() {
+  echo "Updating CA certificates..."
+  cp "${CA_CERTIFICATES_PATH}" "${LOCAL_CA_PATH}"
+  update-ca-certificates --fresh >/dev/null
+}
+
+function ensure_docker_sock() {
+    if [ -f /var/run/docker.sock ]; then
+        sudo chown root:docker /var/run/docker.sock
+        # add user gitlab-runner into group docker
+        sudo usermod -a -G docker gitlab-runner
+        sudo chmod 660 /var/run/docker.sock
+    fi
+}
+
+
+# gitlab-runner's config directory
+CONFIG_FILE=${CONFIG_FILE:-${CONFIG_DIR}/config.toml}
+
+# custom certificate authority path
+CA_CERTIFICATES_PATH=${CA_CERTIFICATES_PATH:-${CONFIG_DIR}/certs/ca.crt}
+LOCAL_CA_PATH="/usr/local/share/ca-certificates/ca.crt"
+
+if [ -f "${CA_CERTIFICATES_PATH}" ]; then
+  # update the ca if the custom ca is different than the current
+  cmp --silent "${CA_CERTIFICATES_PATH}" "${LOCAL_CA_PATH}" || update_ca
+fi
+
+ensure_docker_sock
+while sleep 1m; do ensure_docker_sock; done &
+# launch gitlab-ci-multi-runner passing all arguments
+exec sudo gitlab-ci-multi-runner "$@"
+kill %1

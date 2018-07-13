@@ -1,0 +1,76 @@
+
+FROM cirepo/bionic-cibase:latest
+
+
+ARG IMAGE_ARG_APT_MIRROR
+
+ARG IMAGE_ARG_ENCODING
+ARG IMAGE_ARG_JAVA_OPTS
+ARG IMAGE_ARG_LANGUAGE
+ARG IMAGE_ARG_LOCALE
+ARG IMAGE_ARG_REGION
+ARG IMAGE_ARG_TZ_AREA
+ARG IMAGE_ARG_TZ_ZONE
+
+ARG IMAGE_ARG_USER
+ARG IMAGE_ARG_VERSION
+
+
+ENV CONFIG_DIR /etc/gitlab-runner
+ENV HOME /var/lib/gitlab-runner
+
+ENV JAVA_OPTS -Duser.language=${IMAGE_ARG_LANGUAGE:-en} -Duser.region=${IMAGE_ARG_REGION:-US} -Dfile.encoding=${IMAGE_ARG_ENCODING:-UTF-8} -Duser.timezone=${IMAGE_ARG_TZ_AREA:-Etc}/${IMAGE_ARG_TZ_ZONE:-UTC} ${IMAGE_ARG_JAVA_OPTS}
+ENV LANG ${IMAGE_ARG_LOCALE:-en_US}.${IMAGE_ARG_ENCODING:-UTF-8}
+ENV LC_ALL ${IMAGE_ARG_LOCALE:-en_US}.${IMAGE_ARG_ENCODING:-UTF-8}
+
+
+COPY --from=cirepo/bionic-locale:%IMAGE_ARG_LOCALE%.%IMAGE_ARG_ENCODING%_%IMAGE_ARG_TZ_AREA%.%IMAGE_ARG_TZ_ZONE%-archive /data/root /
+
+
+COPY --chown=root:root docker /
+
+
+#wget -q -O - https://packages.gitlab.com/gpg.key | apt-key add - \
+# then
+#echo "deb https://packages.gitlab.com/runner/gitlab-ci-multi-runner/ubuntu/ bionic main" > /etc/apt/sources.list.d/runner_gitlab-ci-multi-runner.list && apt-get update -y
+# or
+#add-apt-repository "deb https://packages.gitlab.com/runner/gitlab-ci-multi-runner/ubuntu/ $(lsb_release -cs) main" -u
+RUN set -ex \
+  && sudo chmod +x /entrypoint /*.sh \
+  && sudo ${ARIA2C_DOWNLOAD} -d /usr/bin -o dumb-init "https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64" \
+  && sudo chmod +x /usr/bin/dumb-init \
+  && sudo sed -i "s/http:\/\/archive.ubuntu.com\/ubuntu\//http:\/\/${IMAGE_ARG_APT_MIRROR:-archive.ubuntu.com}\/ubuntu\//g" /etc/apt/sources.list \
+  && sudo apt-get -y update \
+  && sudo apt-cache madison gitlab-runner \
+  && sudo apt-get -qy install gitlab-runner=${IMAGE_ARG_VERSION:-10.5.0}+dfsg-2 \
+  && echo 'setup user home directory' \
+  && sudo usermod -d ${HOME:-/var/lib/gitlab-runner} ${IMAGE_ARG_USER:-ubuntu} \
+  && sudo chown -R ${IMAGE_ARG_USER:-ubuntu}:${IMAGE_ARG_USER:-ubuntu} ${HOME:-/var/lib/gitlab-runner} \
+  && mkdir -p ${HOME:-/var/lib/gitlab-runner}/.docker && chmod 775 ${HOME:-/var/lib/gitlab-runner}/.docker \
+  && mkdir -p ${HOME:-/var/lib/gitlab-runner}/.m2 && chmod 775 ${HOME:-/var/lib/gitlab-runner}/.m2 \
+  && mkdir -p ${HOME:-/var/lib/gitlab-runner}/.ssh && chmod 775 ${HOME:-/var/lib/gitlab-runner}/.ssh \
+  && echo '\nHost *\n\
+StrictHostKeyChecking no\n\
+UserKnownHostsFile /dev/null\n' > ${HOME:-/var/lib/gitlab-runner}/.ssh/config \
+  && chmod 700 ${HOME:-/var/lib/gitlab-runner}/.ssh \
+  && chmod 644 ${HOME:-/var/lib/gitlab-runner}/.ssh/config \
+  && mkdir -p ${HOME:-/var/lib/gitlab-runner}/.gnupg && chmod 775 ${HOME:-/var/lib/gitlab-runner}/.gnupg \
+  && echo 'make config directory' \
+  && sudo mkdir -p ${CONFIG_DIR}/certs \
+  && sudo chmod -R 700 ${CONFIG_DIR} \
+  && sudo chown -R ${IMAGE_ARG_USER:-ubuntu}:docker ${CONFIG_DIR} \
+  && echo 'setup user login shell' \
+  && sudo chsh -s /usr/sbin/nologin ${IMAGE_ARG_USER:-ubuntu} \
+  && echo 'clean up' \
+  && sudo apt-get -q -y autoremove \
+  && sudo apt-get -q -y clean && sudo rm -rf /var/lib/apt/lists/* && sudo rm -f /var/cache/apt/*.bin
+
+
+WORKDIR ${HOME:-/var/lib/gitlab-runner}
+
+
+VOLUME ["${CONFIG_DIR}", "${HOME:-/var/lib/gitlab-runner}"]
+
+
+ENTRYPOINT ["/usr/bin/dumb-init", "/entrypoint"]
+CMD ["run", "--user=${IMAGE_ARG_USER:-ubuntu}", "--working-directory=${HOME:-/var/lib/gitlab-runner}"]

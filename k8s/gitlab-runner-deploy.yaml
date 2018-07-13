@@ -1,0 +1,65 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata: 
+  name: gitlab-runner
+  labels:
+    app: gitlab-runner
+
+spec:
+
+  strategy:
+    type: Recreate
+
+
+
+  template:
+    metadata:
+      labels:
+        app: gitlab-runner
+
+    spec:
+      containers:
+      - image: cirepo/gitlab-runner:10.5.0-bionic
+        name: gitlab-runner
+
+        resources:
+#          limits:
+#            cpu: "1"
+#            memory: 1024Mi
+          requests:
+            cpu: "1"
+            memory: 1024Mi
+        env:
+        - name: CI_OPT_INFRASTRUCTURE
+          value: internal
+        - name: CI_INFRA_OPT_GIT_AUTH_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: gitlab-runner-secret
+              key: CI_INFRA_OPT_GIT_AUTH_TOKEN
+        volumeMounts:
+        - name: var-run-docker-dot-sock
+          mountPath: /var/run/docker.sock
+        - name: home-gitlab-runner
+          mountPath: /home/gitlab-runner
+        - name: etc-gitlab-runner
+          mountPath: /etc/gitlab-runner
+      volumes:
+      - name: var-run-docker-dot-sock
+        hostPath:
+          path: /var/run/docker.sock
+      # TODO remote volumes
+      - name: home-gitlab-runner
+        emptyDir: {}
+#        hostPath:
+#          path: /root/.ci-and-cd/gitlab-runner.internal/home/gitlab-runner
+#        nfs:
+#          server: <host>
+#          path: "/root/gitlab-runner"
+      - name: etc-gitlab-runner
+        emptyDir: {}
+#        hostPath:
+#           path: /root/.ci-and-cd/gitlab-runner.internal/etc/gitlab-runner
+#        nfs:
+#          server: <host>
+#          path: "/root/gitlab-runner/etc"
