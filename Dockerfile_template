@@ -46,15 +46,6 @@ RUN set -ex \
   && echo 'setup user home directory' \
   && sudo usermod -d ${HOME:-/var/lib/gitlab-runner} ${IMAGE_ARG_USER:-ubuntu} \
   && sudo chown -R ${IMAGE_ARG_USER:-ubuntu}:${IMAGE_ARG_USER:-ubuntu} ${HOME:-/var/lib/gitlab-runner} \
-  && mkdir -p ${HOME:-/var/lib/gitlab-runner}/.docker && chmod 775 ${HOME:-/var/lib/gitlab-runner}/.docker \
-  && mkdir -p ${HOME:-/var/lib/gitlab-runner}/.m2 && chmod 775 ${HOME:-/var/lib/gitlab-runner}/.m2 \
-  && mkdir -p ${HOME:-/var/lib/gitlab-runner}/.ssh && chmod 775 ${HOME:-/var/lib/gitlab-runner}/.ssh \
-  && echo '\nHost *\n\
-StrictHostKeyChecking no\n\
-UserKnownHostsFile /dev/null\n' > ${HOME:-/var/lib/gitlab-runner}/.ssh/config \
-  && chmod 700 ${HOME:-/var/lib/gitlab-runner}/.ssh \
-  && chmod 644 ${HOME:-/var/lib/gitlab-runner}/.ssh/config \
-  && mkdir -p ${HOME:-/var/lib/gitlab-runner}/.gnupg && chmod 775 ${HOME:-/var/lib/gitlab-runner}/.gnupg \
   && echo 'make config directory' \
   && sudo mkdir -p ${CONFIG_DIR}/certs \
   && sudo chmod -R 700 ${CONFIG_DIR} \
@@ -66,11 +57,11 @@ UserKnownHostsFile /dev/null\n' > ${HOME:-/var/lib/gitlab-runner}/.ssh/config \
   && sudo apt-get -q -y clean && sudo rm -rf /var/lib/apt/lists/* && sudo rm -f /var/cache/apt/*.bin
 
 
-WORKDIR ${HOME:-/var/lib/gitlab-runner}
+WORKDIR /var/lib/gitlab-runner
 
 
-VOLUME ["${CONFIG_DIR}", "${HOME:-/var/lib/gitlab-runner}"]
+VOLUME ["/etc/gitlab-runner", "/var/lib/gitlab-runner"]
 
 
 ENTRYPOINT ["/usr/bin/dumb-init", "/entrypoint"]
-CMD ["run", "--user=${IMAGE_ARG_USER:-ubuntu}", "--working-directory=${HOME:-/var/lib/gitlab-runner}"]
+CMD ["run", "--user=ubuntu", "--working-directory=/var/lib/gitlab-runner"]
