@@ -17,13 +17,13 @@ docker run --privileged=true --rm -v /var/run/docker.sock:/var/run/docker.sock b
 2. Run `docker-compose up -d`
 
 3. Find token for runner.
-Shared: Goto admin/runners page (e.g. http(s)://gitlab:10080/admin/runners).
-Specific: Goto repo's settings/ci_cd page (e.g. http(s)://gitlab:10080/<namespace>/<repo>/settings/ci_cd).
+Shared: Goto admin/runners page (e.g. http(s)://gitlab/admin/runners).
+Specific: Goto repo's settings/ci_cd page (e.g. http(s)://gitlab/<namespace>/<repo>/settings/ci_cd).
 
 4. Run `docker exec -it gitlab-runner sudo gitlab-runner register` and input following info (in <>).
 ```
 Please enter the gitlab-ci coordinator URL (e.g. https://gitlab.com/):
-<e.g. http://gitlab:10080/>
+<e.g. http://gitlab/>
 Please enter the gitlab-ci token for this runner:
 <Token found in step 4>
 Please enter the gitlab-ci description for this runner:
