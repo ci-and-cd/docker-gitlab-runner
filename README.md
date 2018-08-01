@@ -102,6 +102,12 @@ docker exec -it gitlab-runner ls -la /var/lib/gitlab-runner/.ssh
 docker exec -it gitlab-runner ls -la /var/lib/gitlab-runner/.docker
 ```
 
+- ERROR: Job's log exceeded limit of 4194304 bytes.
+```text
+[[runners]]
+  output_limit = 40960
+```
+
 - ERROR: Uploading artifacts to coordinator... too large archive  id=116 responseStatus=413
 
 https://gitlab.com/gitlab-org/gitlab-ce/issues/20612
