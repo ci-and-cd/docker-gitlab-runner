@@ -52,14 +52,14 @@ spec:
       - name: home-gitlab-runner
         emptyDir: {}
 #        hostPath:
-#          path: /root/.ci-and-cd/gitlab-runner.internal/home/gitlab-runner
+#          path: /root/.ci-and-cd/gitlab-runner/home/gitlab-runner
 #        nfs:
 #          server: <host>
 #          path: "/root/gitlab-runner"
       - name: etc-gitlab-runner
         emptyDir: {}
 #        hostPath:
-#           path: /root/.ci-and-cd/gitlab-runner.internal/etc/gitlab-runner
+#           path: /root/.ci-and-cd/gitlab-runner/etc/gitlab-runner
 #        nfs:
 #          server: <host>
 #          path: "/root/gitlab-runner/etc"
