@@ -5,8 +5,8 @@ services:
     extends:
       file: docker-compose-base.yml
       service: base-gitlab-runner
-    container_name: ${INSTANCE_NAME:-gitlab-runner}.${INSTANCE_DOMAIN:-local}
-    hostname: ${INSTANCE_NAME:-gitlab-runner}.${INSTANCE_DOMAIN:-local}
+    container_name: ${CONTAINER_HOST_NAME:-gitlab-runner}
+    hostname: ${CONTAINER_HOST_NAME:-gitlab-runner}
     networks:
       local-network:
         ipv4_address: 172.16.238.25
