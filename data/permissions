@@ -1,0 +1,5 @@
+
+d etc              0:0       700
+d home             1000:1000 755
+d home/.ssh        1000:1000 700
+f home/.ssh/id_rsa 1000:1000 600
