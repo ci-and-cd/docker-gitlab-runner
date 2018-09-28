@@ -58,10 +58,10 @@ RUN set -ex \
   && sudo chmod +x /entrypoint /*.sh \
   && echo 'make directories' \
   && mkdir -p /home/ubuntu/.docker && chmod 775 /home/ubuntu/.docker \
-  && mkdir -p /home/ubuntu/.gnupg && chmod 775 /home/ubuntu/.gnupg \
+  && mkdir -p /home/ubuntu/.gnupg && chmod 700 /home/ubuntu/.gnupg \
   && mkdir -p /home/ubuntu/.gradle && chmod 775 /home/ubuntu/.gradle \
   && mkdir -p /home/ubuntu/.m2 && chmod 775 /home/ubuntu/.m2 \
-  && mkdir -p /home/ubuntu/.ssh && chmod 775 /home/ubuntu/.ssh \
+  && mkdir -p /home/ubuntu/.ssh && chmod 755 /home/ubuntu/.ssh \
   && touch /home/ubuntu/.ssh/config \
   && echo '\n\
 # ssh config\n\
