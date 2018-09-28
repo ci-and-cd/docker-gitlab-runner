@@ -12,7 +12,8 @@ branches:
 dist: trusty
 env:
   global:
-  - IMAGE_ARG_ALPINE_MIRROR=dl-cdn.alpinelinux.org
+  - IMAGE_ARG_APT_MIRROR=archive.ubuntu.com
+  - IMAGE_ARG_GITLAB_RUNNER_MIRROR=https://packages.gitlab.com/runner
   matrix:
   - IMAGE_ARG_ENCODING=UTF-8 IMAGE_ARG_LANGUAGE=en IMAGE_ARG_REGION=US IMAGE_ARG_TZ_AREA=Etc  IMAGE_ARG_TZ_ZONE=UTC
   - IMAGE_ARG_ENCODING=UTF-8 IMAGE_ARG_LANGUAGE=en IMAGE_ARG_REGION=US IMAGE_ARG_TZ_AREA=Asia IMAGE_ARG_TZ_ZONE=Shanghai

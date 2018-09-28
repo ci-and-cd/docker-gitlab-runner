@@ -6,53 +6,48 @@ function update_ca() {
   update-ca-certificates --fresh >/dev/null
 }
 
-function ensure_docker_sock() {
+function ensure_ownership_permissions() {
+    if [ -f ${HOME:-/var/lib/gitlab-runner}/.ssh/id_rsa ]; then chmod 600 ${HOME:-/var/lib/gitlab-runner}/.ssh/id_rsa; fi
+
     if [ -f /var/run/docker.sock ]; then
         sudo chown root:docker /var/run/docker.sock
         # add user gitlab-runner into group docker
-        sudo usermod -a -G docker gitlab-runner
         sudo chmod 660 /var/run/docker.sock
     fi
 }
 
 
-sudo chown -R ${IMAGE_ARG_USER:-ubuntu}:${IMAGE_ARG_USER:-ubuntu} ${HOME:-/var/lib/gitlab-runner}
-mkdir -p ${HOME:-/var/lib/gitlab-runner}/.docker && chmod 775 ${HOME:-/var/lib/gitlab-runner}/.docker
-mkdir -p ${HOME:-/var/lib/gitlab-runner}/.gradle && chmod 775 ${HOME:-/var/lib/gitlab-runner}/.gradle
-mkdir -p ${HOME:-/var/lib/gitlab-runner}/.m2 && chmod 775 ${HOME:-/var/lib/gitlab-runner}/.m2
-mkdir -p ${HOME:-/var/lib/gitlab-runner}/.ssh && chmod 775 ${HOME:-/var/lib/gitlab-runner}/.ssh
-if [ ! -f ${HOME:-/var/lib/gitlab-runner}/.ssh/config ]; then
-  echo '
-# ssh config
-Host *
-    StrictHostKeyChecking no
-    UserKnownHostsFile /dev/null
-
-' > ${HOME:-/var/lib/gitlab-runner}/.ssh/config
-fi
-chmod 700 ${HOME:-/var/lib/gitlab-runner}/.ssh
-chmod 644 ${HOME:-/var/lib/gitlab-runner}/.ssh/config
-mkdir -p ${HOME:-/var/lib/gitlab-runner}/.gnupg && chmod 775 ${HOME:-/var/lib/gitlab-runner}/.gnupg
-echo 'make config directory'
-sudo mkdir -p ${CONFIG_DIR:-/etc/gitlab-runner}/certs
-sudo chmod -R 700 ${CONFIG_DIR:-/etc/gitlab-runner}
-sudo chown -R ${IMAGE_ARG_USER:-ubuntu}:docker ${CONFIG_DIR:-/etc/gitlab-runner}
-
-
-# gitlab-runner's config directory
+# gitlab-runner's config file
 CONFIG_FILE=${CONFIG_FILE:-${CONFIG_DIR}/config.toml}
 
-# custom certificate authority path
-CA_CERTIFICATES_PATH=${CA_CERTIFICATES_PATH:-${CONFIG_DIR}/certs/ca.crt}
-LOCAL_CA_PATH="/usr/local/share/ca-certificates/ca.crt"
-
-if [ -f "${CA_CERTIFICATES_PATH}" ]; then
-  # update the ca if the custom ca is different than the current
-  cmp --silent "${CA_CERTIFICATES_PATH}" "${LOCAL_CA_PATH}" || update_ca
+# init home directory
+if [[ ! -L "${HOME:-/var/lib/gitlab-runner}" ]] && [ ! -d "${HOME:-/var/lib/gitlab-runner}/builds" ]; then
+    if [ ! -d "${HOME:-/var/lib/gitlab-runner}" ]; then
+        sudo mkdir -p "${HOME:-/var/lib/gitlab-runner}";
+    fi
+    sudo cp -pr /home/ubuntu/. ${HOME:-/var/lib/gitlab-runner}/
+    sudo chown -R 1000:1000 ${HOME:-/var/lib/gitlab-runner}
 fi
 
-ensure_docker_sock
-while sleep 1m; do ensure_docker_sock; done &
-# launch gitlab-ci-multi-runner passing all arguments
-exec sudo gitlab-ci-multi-runner "$@"
-kill %1
+
+ensure_ownership_permissions
+if [ -f ${HOME}/.profile ]; then source ${HOME}/.profile; fi
+
+
+if [ "${1:0:1}" != '/' ]; then
+    # custom certificate authority path
+    CA_CERTIFICATES_PATH=${CA_CERTIFICATES_PATH:-${CONFIG_DIR}/certs/ca.crt}
+    LOCAL_CA_PATH="/usr/local/share/ca-certificates/ca.crt"
+
+    if [ -f "${CA_CERTIFICATES_PATH}" ]; then
+      # update the ca if the custom ca is different than the current
+      cmp --silent "${CA_CERTIFICATES_PATH}" "${LOCAL_CA_PATH}" || update_ca
+    fi
+
+    while sleep 1m; do ensure_ownership_permissions; done &
+    # launch gitlab-ci-multi-runner passing all arguments
+    exec sudo gitlab-ci-multi-runner "$@"
+    kill %1
+else
+    exec "$@"
+fi
