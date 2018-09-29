@@ -7,11 +7,11 @@ function update_ca() {
 }
 
 function ensure_ownership_permissions() {
+    if [ -d ${HOME:-/var/lib/gitlab-runner}/.gnupg ]; then chmod 700 ${HOME:-/var/lib/gitlab-runner}/.gnupg; fi
     if [ -f ${HOME:-/var/lib/gitlab-runner}/.ssh/id_rsa ]; then chmod 600 ${HOME:-/var/lib/gitlab-runner}/.ssh/id_rsa; fi
 
     if [ -f /var/run/docker.sock ]; then
         sudo chown root:docker /var/run/docker.sock
-        # add user gitlab-runner into group docker
         sudo chmod 660 /var/run/docker.sock
     fi
 }
