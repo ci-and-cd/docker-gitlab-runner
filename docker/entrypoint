@@ -11,8 +11,8 @@ function ensure_ownership_permissions() {
     if [ -f ${HOME:-/var/lib/gitlab-runner}/.ssh/id_rsa ]; then chmod 600 ${HOME:-/var/lib/gitlab-runner}/.ssh/id_rsa; fi
 
     if [ -S /var/run/docker.sock ]; then
-        sudo chown root:docker /var/run/docker.sock
-        sudo chmod 777 /var/run/docker.sock
+        sudo chown 1000:docker /var/run/docker.sock
+        sudo chmod 660 /var/run/docker.sock
     fi
 }
 
