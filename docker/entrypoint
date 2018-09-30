@@ -16,6 +16,17 @@ function ensure_ownership_permissions() {
     fi
 }
 
+# pass some system environment variables to runner (source this file in before_script of .gitlab-ci.yml)
+function generate_env_file() {
+    local env_file="${HOME:-/var/lib/gitlab-runner}/env"
+    echo -e "\
+export HOST_HOSTNAME='${HOST_HOSTNAME}'\n\
+export HOST_IPADDRESS='${HOST_IPADDRESS}'\n\
+" | tee ${env_file}
+    chown 1000:1000 ${env_file}
+    chmod 775 ${env_file}
+}
+
 
 # gitlab-runner's config file
 CONFIG_FILE=${CONFIG_FILE:-${CONFIG_DIR}/config.toml}
@@ -31,6 +42,7 @@ fi
 
 
 ensure_ownership_permissions
+generate_env_file
 if [ -f ${HOME}/.profile ]; then source ${HOME}/.profile; fi
 
 

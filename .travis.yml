@@ -3,7 +3,15 @@ addons:
   apt:
     packages:
     - aria2
-#before_install:
+before_install:
+- sudo rm -f /usr/local/bin/docker-compose
+#- sudo curl -sSLo /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/1.22.0/docker-compose-`uname -s`-`uname -m`
+#Error -3 from inflate: incorrect header check
+#Error decompressing _bisect.so
+#Failed to write all bytes for _bisect.so
+- sudo aria2c --file-allocation=none -c -x 10 -s 10 -m 0 --console-log-level=notice --log-level=notice --summary-interval=0 -d /usr/local/bin -o docker-compose https://github.com/docker/compose/releases/download/1.22.0/docker-compose-`uname -s`-`uname -m`
+- sudo chmod 755 /usr/local/bin/docker-compose
+- df -h
 branches:
   only:
   - develop
