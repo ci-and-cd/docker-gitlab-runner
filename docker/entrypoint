@@ -36,7 +36,7 @@ if [[ ! -L "${HOME:-/var/lib/gitlab-runner}" ]] && [ ! -d "${HOME:-/var/lib/gitl
     if [ ! -d "${HOME:-/var/lib/gitlab-runner}" ]; then
         sudo mkdir -p "${HOME:-/var/lib/gitlab-runner}";
     fi
-    sudo cp -pr /home/ubuntu/. ${HOME:-/var/lib/gitlab-runner}/
+    sudo cp -npr /home/ubuntu/. ${HOME:-/var/lib/gitlab-runner}/
     sudo chown -R 1000:1000 ${HOME:-/var/lib/gitlab-runner}
 fi
 
