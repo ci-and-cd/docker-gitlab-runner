@@ -12,7 +12,7 @@ function ensure_ownership_permissions() {
 
     if [ -f /var/run/docker.sock ]; then
         sudo chown root:docker /var/run/docker.sock
-        sudo chmod 660 /var/run/docker.sock
+        sudo chmod 777 /var/run/docker.sock
     fi
 }
 
