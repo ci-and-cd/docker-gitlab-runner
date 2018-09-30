@@ -10,7 +10,7 @@ function ensure_ownership_permissions() {
     if [ -d ${HOME:-/var/lib/gitlab-runner}/.gnupg ]; then chmod 700 ${HOME:-/var/lib/gitlab-runner}/.gnupg; fi
     if [ -f ${HOME:-/var/lib/gitlab-runner}/.ssh/id_rsa ]; then chmod 600 ${HOME:-/var/lib/gitlab-runner}/.ssh/id_rsa; fi
 
-    if [ -f /var/run/docker.sock ]; then
+    if [ -S /var/run/docker.sock ]; then
         sudo chown root:docker /var/run/docker.sock
         sudo chmod 777 /var/run/docker.sock
     fi
