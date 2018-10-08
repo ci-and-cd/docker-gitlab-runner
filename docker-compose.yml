@@ -10,7 +10,7 @@ services:
     networks:
       local-network:
         ipv4_address: 172.16.238.25
-        ipv6_address: 2001:3984:3989::25
+        #ipv6_address: 2001:3984:3989::25
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock
     - home:/var/lib/gitlab-runner # gitlab-runner user's home directory
@@ -25,7 +25,7 @@ networks:
       driver: default
       config:
       - subnet: 172.16.238.0/24
-      - subnet: 2001:3984:3989::/64
+      #- subnet: 2001:3984:3989::/64
 
 volumes:
   etc:
