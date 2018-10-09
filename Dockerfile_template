@@ -28,6 +28,15 @@ ENV LC_ALL ${IMAGE_ARG_LOCALE:-en_US}.${IMAGE_ARG_ENCODING:-UTF-8}
 COPY --from=cirepo/locale:%IMAGE_ARG_LOCALE%.%IMAGE_ARG_ENCODING%_%IMAGE_ARG_TZ_AREA%.%IMAGE_ARG_TZ_ZONE%-bionic-archive /data/root /
 
 
+#wget -q -O - https://packages.gitlab.com/gpg.key | sudo apt-key add -
+# version <= 9.x gitlab-ci-multi-runner
+# then
+#echo "deb https://packages.gitlab.com/runner/gitlab-ci-multi-runner/ubuntu/ bionic main" | sudo tee /etc/apt/sources.list.d/runner_gitlab-ci-multi-runner.list && apt-get update -y
+# or
+#sudo add-apt-repository "deb https://packages.gitlab.com/runner/gitlab-ci-multi-runner/ubuntu/ $(lsb_release -cs) main" -u
+#
+# version >= 10.x renamed to gitlab-runner
+#sudo add-apt-repository "deb https://packages.gitlab.com/runner/gitlab-runner/ubuntu/ $(lsb_release -cs) main" -u
 RUN set -ex \
   && sudo ${ARIA2C_DOWNLOAD} -d /usr/bin -o dumb-init "https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64" \
   && sudo chmod +x /usr/bin/dumb-init \
@@ -44,32 +53,8 @@ RUN set -ex \
 
 COPY --chown=root:root docker /
 
-
-#wget -q -O - https://packages.gitlab.com/gpg.key | sudo apt-key add -
-# version <= 9.x gitlab-ci-multi-runner
-# then
-#echo "deb https://packages.gitlab.com/runner/gitlab-ci-multi-runner/ubuntu/ bionic main" | sudo tee /etc/apt/sources.list.d/runner_gitlab-ci-multi-runner.list && apt-get update -y
-# or
-#sudo add-apt-repository "deb https://packages.gitlab.com/runner/gitlab-ci-multi-runner/ubuntu/ $(lsb_release -cs) main" -u
-#
-# version >= 10.x renamed to gitlab-runner
-#sudo add-apt-repository "deb https://packages.gitlab.com/runner/gitlab-runner/ubuntu/ $(lsb_release -cs) main" -u
 RUN set -ex \
   && sudo chmod +x /entrypoint /*.sh \
-  && echo 'make directories' \
-  && mkdir -p /home/ubuntu/.docker && chmod 775 /home/ubuntu/.docker \
-  && mkdir -p /home/ubuntu/.gnupg && chmod 700 /home/ubuntu/.gnupg \
-  && mkdir -p /home/ubuntu/.gradle && chmod 775 /home/ubuntu/.gradle \
-  && mkdir -p /home/ubuntu/.m2 && chmod 775 /home/ubuntu/.m2 \
-  && mkdir -p /home/ubuntu/.ssh && chmod 755 /home/ubuntu/.ssh \
-  && touch /home/ubuntu/.ssh/config \
-  && echo '\n\
-# ssh config\n\
-Host *\n\
-    StrictHostKeyChecking no\n\
-    UserKnownHostsFile /dev/null\n\
-\n' | tee -a /home/ubuntu/.ssh/config \
-  && chmod 644 /home/ubuntu/.ssh/config \
   && echo 'setup user group and home directory' \
   && sudo usermod -a -G docker gitlab-runner \
   && sudo usermod -d ${HOME:-/var/lib/gitlab-runner} ${IMAGE_ARG_USER:-ubuntu} \
