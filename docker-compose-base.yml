@@ -25,5 +25,5 @@ services:
     - CI_INFRA_OPT_GIT_AUTH_TOKEN=${CI_INFRA_OPT_GIT_AUTH_TOKEN:-} # your gitlab or github private token
     - HOST_HOSTNAME=${HOST_HOSTNAME:-}
     - HOST_IPADDRESS=${HOST_IPADDRESS:-}
-    image: ${IMAGE_PREFIX:-cirepo}/${IMAGE_NAME:-gitlab-runner}:${IMAGE_TAG:-11.3.1-en_US.UTF-8_Etc.UTC-bionic}
+    image: ${IMAGE_PREFIX:-cirepo/}${IMAGE_NAME:-gitlab-runner}:${IMAGE_TAG:-11.3.1-en_US.UTF-8_Etc.UTC-bionic}
     restart: always
