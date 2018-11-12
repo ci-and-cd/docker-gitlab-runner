@@ -5,8 +5,16 @@ services:
     extends:
       file: docker-compose-base.yml
       service: base-gitlab-runner
-    container_name: ${CONTAINER_HOST_NAME:-gitlab-runner}
-    hostname: ${CONTAINER_HOST_NAME:-gitlab-runner}
+    container_name: ${CONTAINER_HOST_NAME:-standalone.gitlab-runner}
+    hostname: ${CONTAINER_HOST_NAME:-standalone.gitlab-runner}
+    labels:
+      deploy.config.commit: ${LABEL_DEPLOY_CONFIG_COMMIT:-unknown}
+      deploy.config.name: ${LABEL_DEPLOY_CONFIG_NAME:-unknown}
+      deploy.config.ref: ${LABEL_DEPLOY_CONFIG_REF:-unknown}
+      deploy.util.commit: ${LABEL_DEPLOY_UTIL_COMMIT:-unknown}
+      deploy.util.ref: ${LABEL_DEPLOY_UTIL_REF:-unknown}
+      instance.name.short: ${LABEL_INSTANCE_NAME_SHORT:-standalone.gitlab-runner}
+      instance.name: ${LABEL_INSTANCE_NAME:-127.0.0.1/gitlab-runner/standalone}
     network_mode: bridge
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock
