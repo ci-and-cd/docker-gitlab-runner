@@ -19,13 +19,13 @@ services:
       - IMAGE_ARG_TZ_ZONE=${IMAGE_ARG_TZ_ZONE:-UTC}
 
       - IMAGE_ARG_USER=${IMAGE_ARG_USER:-ubuntu}
-      - IMAGE_ARG_VERSION=${IMAGE_ARG_VERSION:-11.3.1}
+      - IMAGE_ARG_VERSION=${IMAGE_ARG_VERSION:-11.8.0}
     environment:
     # Do not set token here. Let users set this in gitlab project -> settings -> CI/DI pipelines
     - CI_INFRA_OPT_GIT_AUTH_TOKEN=${CI_INFRA_OPT_GIT_AUTH_TOKEN:-} # your gitlab or github private token
     - HOST_HOSTNAME=${HOST_HOSTNAME:-}
     - HOST_IPADDRESS=${HOST_IPADDRESS:-}
-    image: ${IMAGE_PREFIX:-cirepo/}${IMAGE_NAME:-gitlab-runner}:${IMAGE_TAG:-11.3.1-en_US.UTF-8_Etc.UTC-bionic}
+    image: ${IMAGE_PREFIX:-cirepo/}${IMAGE_NAME:-gitlab-runner}:${IMAGE_TAG:-11.8.0-en_US.UTF-8_Etc.UTC-bionic}
     labels:
       deploy.config.commit: ${LABEL_DEPLOY_CONFIG_COMMIT:-unknown}
       deploy.config.name: ${LABEL_DEPLOY_CONFIG_NAME:-unknown}

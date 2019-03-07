@@ -1,5 +1,5 @@
 
-FROM cirepo/cibase:latest-bionic
+FROM cirepo/cibase:latest-bionic-SNAPSHOT
 
 
 ARG IMAGE_ARG_APT_MIRROR
@@ -45,7 +45,7 @@ RUN set -ex \
   && sudo sed -i "s/http:\/\/archive.ubuntu.com\/ubuntu\//http:\/\/${IMAGE_ARG_APT_MIRROR:-archive.ubuntu.com}\/ubuntu\//g" /etc/apt/sources.list \
   && sudo apt-get -y update \
   && sudo apt-cache madison gitlab-runner \
-  && sudo apt-get -qy install gitlab-runner=${IMAGE_ARG_VERSION:-11.3.1} \
+  && sudo apt-get -qy install gitlab-runner=${IMAGE_ARG_VERSION:-11.8.0} \
   && echo 'clean up' \
   && sudo apt-get -q -y autoremove \
   && sudo apt-get -q -y clean && sudo rm -rf /var/lib/apt/lists/* && sudo rm -f /var/cache/apt/*.bin
