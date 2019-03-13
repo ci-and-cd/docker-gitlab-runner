@@ -1,5 +1,5 @@
 
-FROM cirepo/cibase:latest-bionic-SNAPSHOT
+FROM cirepo/cibase:latest-bionic
 
 
 ARG IMAGE_ARG_APT_MIRROR
