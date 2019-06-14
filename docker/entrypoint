@@ -20,7 +20,7 @@ function ensure_ownership_permissions() {
 function generate_env_file() {
     local env_file="${HOME:-/var/lib/gitlab-runner}/env"
     echo -e "\
-if [ -z \"\${CI_INFRA_OPT_GIT_AUTH_TOKEN}\" ] && [ -n \"${CI_INFRA_OPT_GIT_AUTH_TOKEN}\" ]; then export CI_INFRA_OPT_GIT_AUTH_TOKEN='${CI_INFRA_OPT_GIT_AUTH_TOKEN}'; fi\n\
+if [ -z \"\${CI_OPT_GIT_AUTH_TOKEN}\" ] && [ -n \"${CI_OPT_GIT_AUTH_TOKEN}\" ]; then export CI_OPT_GIT_AUTH_TOKEN='${CI_OPT_GIT_AUTH_TOKEN}'; fi\n\
 if [ -z \"\${HOST_HOSTNAME}\" ] && [ -n \"${HOST_HOSTNAME}\" ]; then export HOST_HOSTNAME='${HOST_HOSTNAME}'; fi\n\
 if [ -z \"\${HOST_IPADDRESS}\" ] && [ -n \"${HOST_IPADDRESS}\" ]; then export HOST_IPADDRESS='${HOST_IPADDRESS}'; fi\n\
 " | tee ${env_file}

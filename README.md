@@ -44,7 +44,7 @@ Runner registered successfully. Feel free to start it, but if it's running alrea
 ## Note
 
 - It seems most recent version of gitlab-runner's build process can't see host's environment variables such as JAVA_HOME 
-or CI_INFRA_OPT_GIT_AUTH_TOKEN (e.g. gitlab: http(s)://gitlab/profile/personal_access_tokens).
+or CI_OPT_GIT_AUTH_TOKEN (e.g. gitlab: http(s)://gitlab/profile/personal_access_tokens).
 You can add environment variables at Repository->Settings->CI/CD Pipelines->Secret Variables.
 
 
@@ -120,9 +120,9 @@ https://gitlab.com/gitlab-org/gitlab-ce/issues/20612
 
 - This should be done by a cron script on host that fix permission of '/var/run/docker.sock' periodically
 
-2. put CI_INFRA_OPT_GIT_AUTH_TOKEN into gitlab-runner/k8s/gitlab-runner-secret.yaml by
-- `export CI_INFRA_OPT_GIT_AUTH_TOKEN=<your_CI_INFRA_OPT_GIT_AUTH_TOKEN>`
-- `sed "s#<PUT_BASE64_CI_INFRA_OPT_GIT_AUTH_TOKEN_HERE_MANUALLY>#$(echo -n ${CI_INFRA_OPT_GIT_AUTH_TOKEN} | base64 -w 0)#" gitlab-runner-secret.template > gitlab-runner-secret.yaml`
+2. put CI_OPT_GIT_AUTH_TOKEN into gitlab-runner/k8s/gitlab-runner-secret.yaml by
+- `export CI_OPT_GIT_AUTH_TOKEN=<your_CI_OPT_GIT_AUTH_TOKEN>`
+- `sed "s#<PUT_BASE64_CI_OPT_GIT_AUTH_TOKEN_HERE_MANUALLY>#$(echo -n ${CI_OPT_GIT_AUTH_TOKEN} | base64 -w 0)#" gitlab-runner-secret.template > gitlab-runner-secret.yaml`
 
 3. Run `kubectl cluster-info` check that kubectl is properly configured
 

@@ -32,11 +32,11 @@ spec:
         env:
         - name: CI_OPT_INFRASTRUCTURE
           value: internal
-        - name: CI_INFRA_OPT_GIT_AUTH_TOKEN
+        - name: CI_OPT_GIT_AUTH_TOKEN
           valueFrom:
             secretKeyRef:
               name: gitlab-runner-secret
-              key: CI_INFRA_OPT_GIT_AUTH_TOKEN
+              key: CI_OPT_GIT_AUTH_TOKEN
         volumeMounts:
         - name: var-run-docker-dot-sock
           mountPath: /var/run/docker.sock
