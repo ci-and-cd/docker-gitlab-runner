@@ -1,0 +1,31 @@
+
+# docker run --rm -it -v /path/to/etc/gitlab-runner:/etc/gitlab-runner --name gitlab-runner gitlab/gitlab-runner:alpine-v12.1.0 register --non-interactive --executor "docker" --docker-image alpine:3 --url "https://gitlab.com/" --registration-token "PROJECT_REGISTRATION_TOKEN" --description "ci-and-cd.gitlab-runner" --tag-list "ci-and-cd,docker,topinfra,ossrh" --run-untagged="true" --locked="false"
+
+version: '2.1'
+services:
+  gitlab-runner:
+    command: ${COMMAND:-run --user=gitlab-runner --working-directory=/home/gitlab-runner}
+    container_name: ${CONTAINER_HOST_NAME:-standalone.gitlab-runner}
+    hostname: ${CONTAINER_HOST_NAME:-standalone.gitlab-runner}
+    image: ${IMAGE_PREFIX:-gitlab/}${IMAGE_NAME:-gitlab-runner}:${IMAGE_TAG:-alpine-v12.1.0}
+    labels:
+      deploy.config.commit: ${LABEL_DEPLOY_CONFIG_COMMIT:-unknown}
+      deploy.config.name: ${LABEL_DEPLOY_CONFIG_NAME:-unknown}
+      deploy.config.ref: ${LABEL_DEPLOY_CONFIG_REF:-unknown}
+      deploy.util.commit: ${LABEL_DEPLOY_UTIL_COMMIT:-unknown}
+      deploy.util.ref: ${LABEL_DEPLOY_UTIL_REF:-unknown}
+      instance.name.short: ${LABEL_INSTANCE_NAME_SHORT:-standalone.gitlab-runner}
+      instance.name: ${LABEL_INSTANCE_NAME:-127.0.0.1/gitlab-runner/standalone}
+    network_mode: bridge
+    privileged: true
+    restart: always
+    volumes:
+    - etc:/etc/gitlab-runner # gitlab-runner's config directory
+
+volumes:
+  etc:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/data/etc
+      o: bind
