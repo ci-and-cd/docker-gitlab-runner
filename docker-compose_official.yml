@@ -20,6 +20,7 @@ services:
     privileged: true
     restart: always
     volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
     - etc:/etc/gitlab-runner # gitlab-runner's config directory
 
 volumes:
