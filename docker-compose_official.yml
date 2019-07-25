@@ -2,6 +2,9 @@
 # docker run --rm -it -v /path/to/etc/gitlab-runner:/etc/gitlab-runner --name gitlab-runner gitlab/gitlab-runner:alpine-v12.1.0 register --non-interactive --executor "docker" --docker-image alpine:3 --url "https://gitlab.com/" --registration-token "PROJECT_REGISTRATION_TOKEN" --description "ci-and-cd.gitlab-runner" --tag-list "ci-and-cd,docker,topinfra,ossrh" --run-untagged="true" --locked="false"
 #sudo vi data/etc/config.toml
 # Find [runners.docker] and replace 'privileged = false' to 'privileged = true'
+# 'pull_policy = if-not-present' is optional
+
+# see: [Prevent Gitlab-runner from leaving dead containers/volumes](https://gitlab.com/gitlab-org/gitlab-runner/issues/2980)
 
 version: '2.1'
 services:
