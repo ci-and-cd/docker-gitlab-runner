@@ -7,10 +7,9 @@ function update_ca() {
 }
 
 function ensure_ownership_permissions() {
-    if [ -d ${HOME:-/var/lib/gitlab-runner}/.gnupg ]; then chmod 700 ${HOME:-/var/lib/gitlab-runner}/.gnupg; fi
-    if [ -f ${HOME:-/var/lib/gitlab-runner}/.ssh/id_rsa ]; then chmod 600 ${HOME:-/var/lib/gitlab-runner}/.ssh/id_rsa; fi
+    if [[ -f ${HOME:-/var/lib/gitlab-runner}/.ssh/id_rsa ]]; then chmod 600 ${HOME:-/var/lib/gitlab-runner}/.ssh/id_rsa; fi
 
-    if [ -S /var/run/docker.sock ]; then
+    if [[ -S /var/run/docker.sock ]]; then
         sudo chown 1000:docker /var/run/docker.sock
         sudo chmod 660 /var/run/docker.sock
     fi
@@ -33,8 +32,8 @@ if [ -z \"\${HOST_IPADDRESS}\" ] && [ -n \"${HOST_IPADDRESS}\" ]; then export HO
 CONFIG_FILE=${CONFIG_FILE:-${CONFIG_DIR}/config.toml}
 
 # init home directory
-if [[ ! -L "${HOME:-/var/lib/gitlab-runner}" ]] && [ ! -d "${HOME:-/var/lib/gitlab-runner}/builds" ]; then
-    if [ ! -d "${HOME:-/var/lib/gitlab-runner}" ]; then
+if [[ ! -L "${HOME:-/var/lib/gitlab-runner}" ]] && [[ ! -d "${HOME:-/var/lib/gitlab-runner}/builds" ]]; then
+    if [[ ! -d "${HOME:-/var/lib/gitlab-runner}" ]]; then
         sudo mkdir -p "${HOME:-/var/lib/gitlab-runner}";
     fi
     sudo cp -npr /home/ubuntu/. ${HOME:-/var/lib/gitlab-runner}/
@@ -44,15 +43,16 @@ fi
 
 ensure_ownership_permissions
 generate_env_file
-if [ -f ${HOME}/.profile ]; then source ${HOME}/.profile; fi
+if [[ -f ${HOME}/.profile ]]; then source ${HOME}/.profile; fi
 
 
-if [ "${1:0:1}" != '/' ]; then
+valid_gitlab_runner_commands=("exec" "run" "register" "install" "uninstall" "start" "stop" "restart" "status" "run-single" "unregister" "verify" "archive" "artifacts" "extract" "help" "--help" "--debug")
+if [[ " ${valid_gitlab_runner_commands[@]} " =~ " ${1} " ]]; then
     # custom certificate authority path
     CA_CERTIFICATES_PATH=${CA_CERTIFICATES_PATH:-${CONFIG_DIR}/certs/ca.crt}
     LOCAL_CA_PATH="/usr/local/share/ca-certificates/ca.crt"
 
-    if [ -f "${CA_CERTIFICATES_PATH}" ]; then
+    if [[ -f "${CA_CERTIFICATES_PATH}" ]]; then
       # update the ca if the custom ca is different than the current
       cmp --silent "${CA_CERTIFICATES_PATH}" "${LOCAL_CA_PATH}" || update_ca
     fi
