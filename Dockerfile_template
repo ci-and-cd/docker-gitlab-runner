@@ -46,7 +46,8 @@ RUN set -ex \
   && sudo sed -i "s/http:\/\/archive.ubuntu.com\/ubuntu\//http:\/\/${IMAGE_ARG_APT_MIRROR:-archive.ubuntu.com}\/ubuntu\//g" /etc/apt/sources.list \
   && sudo apt-get -y update \
   && sudo apt-cache madison gitlab-runner \
-  && sudo UCF_FORCE_CONFFNEW=1 apt-get -qy install gitlab-runner=${IMAGE_ARG_VERSION:-12.1.0} \
+  && export UCF_FORCE_CONFFNEW=1 \
+  && sudo -E apt-get -qy install gitlab-runner=${IMAGE_ARG_VERSION:-12.1.0} \
   && echo 'clean up' \
   && sudo apt-get -q -y autoremove \
   && sudo apt-get -q -y clean && sudo rm -rf /var/lib/apt/lists/* && sudo rm -f /var/cache/apt/*.bin
